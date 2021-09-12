@@ -1,0 +1,31 @@
+{
+  "name": "api-wchallenge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node server/app.js",
+    "start:dev": "nodemon server/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JaverBena/WChallenge.git"
+  },
+  "author": "Javer Benavidez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JaverBena/WChallenge/issues"
+  },
+  "homepage": "https://github.com/JaverBena/WChallenge#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.5",
+    "nodemon": "^2.0.12",
+    "swagger-ui-express": "^4.1.6",
+    "yup": "^0.32.9"
+  }
+}
