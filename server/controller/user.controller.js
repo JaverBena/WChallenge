@@ -1,43 +1,76 @@
+"use strict";
+
 const userModel = require('../models/user.model'),
-    jwt = require('jsonwebtoken'),
     config = require('../config/general.config'),
-    utils = require('../lib/utilities');
+    utilities = require('../lib/utilities'),
+    { verifyUserName, generateToken } = require('../lib/utils');
 
-const verifyUserName = async (userName) => {
-    const userFound = await userModel.findOne({userName});
-    return userFound? true : false;
-};
-
+/**
+ * Función que permite registrar un usuario y de generarle el token.
+ * @param {*} user Objeto con la información del usuario a registrar
+ * @returns Response
+ */
 const createUser = async (user) => {
     return new Promise(async (resolve, reject) => {
-        let userCloned = utils.cloneObject(user);
+        let userCloned = utilities.cloneObject(user);
 
         const userFound = await verifyUserName(user.userName);
         if (userFound) reject({
             status: 400,
-            message: "Ups! El 'userName' que ingresaste ya existe. Por favor ingresa uno diferente."
+            message: "Ups! El nombre de usuario que ingresaste ya existe. Por favor ingresa uno diferente."
         });
 
         userCloned.password = await userModel.encryptPassword(user.password);
 
-        const newUser = new userModel(user);
-        await newUser.save((err, resultDB) => {
-            if (err) reject(err)
+        const newUser = new userModel(userCloned);
+        await newUser.save((err) => {
+            if (err) reject(err);
         });
 
-        const token = jwt.sign({id: newUser._id}, config.SECRET, { expiresIn: config.timeToken });
+        const token = generateToken(newUser.userName);
         const response = {
             message: "Usuario creado con éxito",
             documents: {
                 token,
-                expireAt: utils.addSeconds(new Date(), config.timeToken)
+                expireAt: utilities.addSeconds(new Date(), config.timeToken)
             }
-        }
+        };
         resolve(response);
+    });
+};
 
+/**
+ * Función que permite obtener el token para realizar consultas.
+ * @param {*} user Objeto con los datos del usuario para login
+ * @returns Response con el token
+ */
+const login = async (user) => {
+    return new Promise(async(resolve, reject) => {
+        const userFound = await verifyUserName(user.userName);
+        if (!userFound) reject({
+            status: 400,
+            message: "Ups! El nombre de usuario que ingresaste no existe. Por favor ingresa uno diferente."
+        });
+
+        const matchPassword = await userModel.comparePass(user.password, userFound.password);
+        if (!matchPassword) reject({
+            status: 401,
+            message: "Ups! Contraseña invalida"
+        });
+
+        const token = generateToken(userFound.userName);
+        const response = {
+            message: "Inicio de sesión exitoso!",
+            documents: {
+                token,
+                expireAt: utilities.addSeconds(new Date(), config.timeToken)
+            }
+        };
+        resolve(response);
     });
 };
 
 module.exports = {
-    createUser
-}
+    createUser,
+    login
+};

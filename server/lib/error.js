@@ -1,9 +1,9 @@
 "use strict";
 
-const utils = require("./utilities"),
+const utilities = require("./utilities"),
     config = require("../config/general.config");
 
-const isNullOrEmpty = utils.isNullOrEmpty;
+const isNullOrEmpty = utilities.isNullOrEmpty;
 
 /**
  * Funcion para tratamiento de errores

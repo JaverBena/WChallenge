@@ -47,11 +47,35 @@ function userRequest(data) {
             .matches(RegExp.currency, {
                 message: `currency [${data.currency}] does not contain the valid format`
             }),
-    })
+    });
 
     schema.validateSync(data);
-};
+}
+
+function loginRequest(data) {
+
+    const schema = yup.object().shape({
+        userName: yup
+            .string()
+            .required()
+            .min(1)
+            .max(15)
+            .matches(RegExp.string, {
+                message: `userName [${data.userName}] does not contain the valid format`
+            }),
+        password: yup
+            .string()
+            .required()
+            .min(8)
+            .matches(RegExp.string, {
+                message: `password [${data.password}] does not contain the valid format`
+            })
+    });
+
+    schema.validateSync(data);
+}
 
 module.exports = {
-    userRequest
+    userRequest,
+    loginRequest
 };

@@ -9,7 +9,7 @@ const isNull = function (value) {
     return ((value === null && typeof value === "object") ||
         (value === "null" && typeof value === "string")) ?
         true : false;
-}
+};
 
 /**
  * Función para validar si "value" es undefined
@@ -20,7 +20,7 @@ const isUndefined = function (value) {
     return ((value === undefined && typeof value === "undefined") ||
         (value === "undefined" && typeof value === "string")) ?
         true : false;
-}
+};
 
 /**
  * Función para validar si "value" es empty
@@ -31,7 +31,7 @@ const isEmpty = function (value) {
     return (isUndefined(value) ||
         (value === "" && typeof value === "string")) ?
         true : false;
-}
+};
 
 /**
  * Función para validar si "value" es null, undefined o vacío
@@ -42,7 +42,7 @@ const isEmpty = function (value) {
  */
 const isNullOrEmpty = function (value) {
     return (isNull(value) || isEmpty(value)) ? true : false;
-}
+};
 
 /** 
  * Evalua si el objeto contiene la propiedad dada. Identico a object.hasOwnProperty(key), 
@@ -52,7 +52,7 @@ const isNullOrEmpty = function (value) {
  */
 const has = (object, key) => {
     return object != null && Object.prototype.hasOwnProperty.call(object, key);
-}
+};
 
 /**
  * Función que permite agregar una nueva propiedad a un objeto
@@ -81,7 +81,7 @@ const addSeconds = (origin_date, seconds) => {
     let fecha = new Date(origin_date);
     fecha.setSeconds(fecha.getSeconds() + seconds);
     return fecha.toLocaleString("es-CO");
-}
+};
 
 module.exports = {
     has,

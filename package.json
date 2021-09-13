@@ -4,8 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node server/app.js",
+    "start": "nodemon server/app.js",
     "start:dev": "nodemon server/app.js",
+    "pretest": "eslint --ignore-path .gitignore .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -27,5 +28,8 @@
     "nodemon": "^2.0.12",
     "swagger-ui-express": "^4.1.6",
     "yup": "^0.32.9"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0"
   }
 }
