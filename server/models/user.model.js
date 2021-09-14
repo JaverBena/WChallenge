@@ -1,7 +1,6 @@
 "use strict";
 
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
 const User = new mongoose.Schema({
     name: String,
@@ -16,14 +15,5 @@ const User = new mongoose.Schema({
     timestamps: true,
     versionKey: false
 });
-
-User.statics.encryptPassword = async (pass) => {
-    const salt = await bcrypt.genSalt();
-    return bcrypt.hash(pass, salt);
-};
-
-User.statics.comparePass = async (pass, passEncrypted) => {
-    return await bcrypt.compare(pass, passEncrypted);
-};
 
 module.exports = mongoose.model('User', User, 'coll_user');

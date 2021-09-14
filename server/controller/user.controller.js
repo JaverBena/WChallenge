@@ -1,9 +1,13 @@
 "use strict";
 
 const userModel = require('../models/user.model'),
+    msg = require('../class/messageGeneral'),
     config = require('../config/general.config'),
     utilities = require('../lib/utilities'),
-    { verifyUserName, generateToken } = require('../lib/utils');
+    error = require('../lib/error'),
+    database = require('../config/db.connection'),
+    { verifyUserName, generateToken } = require('../lib/utils'),
+    { encryptPassword, comparePass } = require('../services/index');
 
 /**
  * Función que permite registrar un usuario y de generarle el token.
@@ -11,32 +15,60 @@ const userModel = require('../models/user.model'),
  * @returns Response
  */
 const createUser = async (user) => {
-    return new Promise(async (resolve, reject) => {
+    let msgResponse = new msg.MessageBuilder()
+        .setSuccess(false)
+        .setStatus(500)
+        .setMessage()
+        .build();
+
+    try {
         let userCloned = utilities.cloneObject(user);
+        //Se verifica si existe el nombre de usuario
+        await verifyUserName(user.userName)
+            .then(async userFound => {
+                if (userFound) {
+                    msgResponse.status = 400;
+                    msgResponse.message = "Ups! El nombre de usuario que ingresaste ya existe. Por favor ingresa uno diferente.";
+                    return msgResponse;
+                }
 
-        const userFound = await verifyUserName(user.userName);
-        if (userFound) reject({
-            status: 400,
-            message: "Ups! El nombre de usuario que ingresaste ya existe. Por favor ingresa uno diferente."
-        });
+                //Se encripta la contraseña ingresada
+                await encryptPassword(user.password)
+                    .then(async pass => {
+                        userCloned.password = pass;
 
-        userCloned.password = await userModel.encryptPassword(user.password);
+                        //Se almacena el usuario
+                        await database.dbConnect();
+                        const newUser = new userModel(userCloned);
+                        await newUser.save();
+                        await database.dbDisconnect();
 
-        const newUser = new userModel(userCloned);
-        await newUser.save((err) => {
-            if (err) reject(err);
-        });
 
-        const token = generateToken(newUser.userName);
-        const response = {
-            message: "Usuario creado con éxito",
-            documents: {
-                token,
-                expireAt: utilities.addSeconds(new Date(), config.timeToken)
-            }
-        };
-        resolve(response);
-    });
+                        //Se genera el token
+                        const token = generateToken(newUser.userName);
+                        msgResponse.success = true;
+                        msgResponse.status = 200;
+                        msgResponse.message = "Usuario creado con éxito";
+                        msgResponse.documents = {
+                            token,
+                            expireAt: utilities.addSeconds(new Date(), config.timeToken)
+                        };
+                    })
+                    .catch(e => {
+                        console.log(`>>> Error encriptando la constraseña: - ${e}`);
+                        msgResponse = error.errorHandler(e, msgResponse);
+                    })
+            })
+            .catch(e => {
+                console.log(`>>> Error verificando el nombre de usuario: - ${e}`);
+                msgResponse = error.errorHandler(e, msgResponse);
+            })
+    } catch (e) {
+        console.log(`>>> Error en el método de 'createUser': - ${e}`);
+        msgResponse = error.errorHandler(e, msgResponse);
+    } finally {
+        return msgResponse;
+    }
 };
 
 /**
@@ -45,29 +77,58 @@ const createUser = async (user) => {
  * @returns Response con el token
  */
 const login = async (user) => {
-    return new Promise(async(resolve, reject) => {
-        const userFound = await verifyUserName(user.userName);
-        if (!userFound) reject({
-            status: 400,
-            message: "Ups! El nombre de usuario que ingresaste no existe. Por favor ingresa uno diferente."
-        });
+    let msgResponse = new msg.MessageBuilder()
+        .setSuccess(false)
+        .setStatus(500)
+        .setMessage()
+        .build();
 
-        const matchPassword = await userModel.comparePass(user.password, userFound.password);
-        if (!matchPassword) reject({
-            status: 401,
-            message: "Ups! Contraseña invalida"
-        });
+    try {
+        //Se verifica si existe el usuario
+        await verifyUserName(user.userName)
+            .then(async r => {
+                const userFound = r;
+                if (!userFound) {
+                    msgResponse.status = 400;
+                    msgResponse.message = "Ups! El nombre de usuario que ingresaste no existe. Por favor ingresa uno diferente.";
+                    return msgResponse;
+                };
 
-        const token = generateToken(userFound.userName);
-        const response = {
-            message: "Inicio de sesión exitoso!",
-            documents: {
-                token,
-                expireAt: utilities.addSeconds(new Date(), config.timeToken)
-            }
-        };
-        resolve(response);
-    });
+                //Se compara las constraseñas
+                await comparePass(user.password, userFound.password)
+                    .then(async r => {
+                        const matchPassword = r;
+                        if (!matchPassword) {
+                            msgResponse.status = 401;
+                            msgResponse.message = "Ups! Contraseña invalida";
+                            return msgResponse;
+                        }
+
+                        //Se genera el token
+                        const token = generateToken(userFound.userName);
+                        msgResponse.success = true;
+                        msgResponse.status = 200;
+                        msgResponse.message = "Inicio de sesión exitoso!";
+                        msgResponse.documents = {
+                            token,
+                            expireAt: utilities.addSeconds(new Date(), config.timeToken)
+                        }
+                    })
+                    .catch(e => {
+                        console.log(`>>> Error comparando contraseñas: - ${e}`);
+                        msgResponse = error.errorHandler(e, msgResponse);
+                    })
+            })
+            .catch(e => {
+                console.log(`>>> Error verificando el nombre de usuario: - ${e}`);
+                msgResponse = error.errorHandler(e, msgResponse);
+            })
+    } catch (e) {
+        console.log(`>>> Error en el método de 'login': - ${e}`);
+        msgResponse = error.errorHandler(e, msgResponse);
+    } finally {
+        return msgResponse;
+    }
 };
 
 module.exports = {

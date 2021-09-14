@@ -1,7 +1,6 @@
 "use strict";
 
-const utilities = require("./utilities"),
-    config = require("../config/general.config");
+const utilities = require("./utilities");
 
 const isNullOrEmpty = utilities.isNullOrEmpty;
 
@@ -10,28 +9,28 @@ const isNullOrEmpty = utilities.isNullOrEmpty;
  * @param {*} e Error generado
  * @returns {} Result
  */
-function errorHandler(e) {
-    let r = {};
-    if (config.logs) console.log("> ErrorHandler ", e.message);
+function errorHandler(e, msg) {
+
     if (e.name === 'ValidationError')
-        r.status = 400;
+        msg.status = 400;
     else if (e.status)
-        r.status = e.status;
+        msg.status = e.status;
     else
-        r.status = 500;
+        msg.status = 500;
 
     if (!isNullOrEmpty(e.response) && !isNullOrEmpty(e.response.data)) {
-        r.status = e.response.status;
-        r.message = e.response.data.title;
-        r.documents = {
-            errors: e.response.data.errors
+        msg.status = e.response.status;
+        msg.message = "Failed transaction";
+        msg.documents = {
+            errors: e.response.data.errors || e.response.data.error
         };
         if (e.metadata)
-            r.documents.metadata = e.metadata;
+            msg.documents.metadata = e.metadata;
     } else {
-        r.message = e.message || e.stack;
+        msg.message = e.message || e.stack || "Failed transaction";;
     }
-    return r;
+    msg.success = false;
+    return msg;
 }
 
 module.exports = { errorHandler };

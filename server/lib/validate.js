@@ -4,10 +4,10 @@ const yup = require("yup");
 
 const RegExp = {
     string: /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\-\.\s]+$/,
-    currency: /^(EUR|USD|ARP)$/,
+    currency: /^(EUR|eur|USD|usd|ARS|ars)$/
 };
 
-function userRequest(data) {
+function userReq(data) {
 
     const schema = yup.object().shape({
         name: yup
@@ -52,7 +52,7 @@ function userRequest(data) {
     schema.validateSync(data);
 }
 
-function loginRequest(data) {
+function loginReq(data) {
 
     const schema = yup.object().shape({
         userName: yup
@@ -75,7 +75,22 @@ function loginRequest(data) {
     schema.validateSync(data);
 }
 
+function getCoinsReq(data) {
+
+    const schema = yup.object().shape({
+        currency: yup
+            .string()
+            .required()
+            .matches(RegExp.currency2, {
+                message: `currency [${data.currency}] does not contain the valid format`
+            }),
+    });
+
+    schema.validateSync(data);
+}
+
 module.exports = {
-    userRequest,
-    loginRequest
+    userReq,
+    loginReq,
+    getCoinsReq
 };

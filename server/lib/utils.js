@@ -2,6 +2,7 @@
 
 const userModel = require('../models/user.model'),
     jwt = require('jsonwebtoken'),
+    database = require('../config/db.connection'),
     config = require('../config/general.config');
 
 /**
@@ -10,7 +11,9 @@ const userModel = require('../models/user.model'),
  * @returns boolean indicando si existe o no el usuario
  */
  const verifyUserName = async (userName) => {
+    await database.dbConnect();
     const userFound = await userModel.findOne({userName});
+    await database.dbDisconnect();
     return userFound? userFound : false;
 };
 

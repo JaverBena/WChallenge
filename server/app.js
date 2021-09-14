@@ -1,13 +1,13 @@
 "use strict";
 
 const express = require('express'),
-    database = require('./config/db.connection'),
+    // database = require('./config/db.connection'),
     app = express(),
     cors = require('cors'),
     config = require('./config/general.config'),
     info = require('../package.json');
 
-database.dbConnect();
+// database.dbConnect();
 
 app
     .use(express.urlencoded({ extended: false }))
