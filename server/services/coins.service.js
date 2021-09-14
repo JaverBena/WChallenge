@@ -14,4 +14,4 @@ const getCoinsService = async (urlCoins, params) => {
 
 module.exports = {
     getCoinsService
-}
+};

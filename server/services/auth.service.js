@@ -25,4 +25,4 @@ const comparePass = async (pass, passEncrypted) => {
 module.exports = {
     encryptPassword,
     comparePass
-}
+};

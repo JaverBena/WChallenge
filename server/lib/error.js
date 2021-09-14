@@ -27,7 +27,7 @@ function errorHandler(e, msg) {
         if (e.metadata)
             msg.documents.metadata = e.metadata;
     } else {
-        msg.message = e.message || e.stack || "Failed transaction";;
+        msg.message = e.message || e.stack || "Failed transaction";
     }
     msg.success = false;
     return msg;

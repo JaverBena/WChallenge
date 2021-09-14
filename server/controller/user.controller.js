@@ -57,12 +57,12 @@ const createUser = async (user) => {
                     .catch(e => {
                         console.log(`>>> Error encriptando la constraseña: - ${e}`);
                         msgResponse = error.errorHandler(e, msgResponse);
-                    })
+                    });
             })
             .catch(e => {
                 console.log(`>>> Error verificando el nombre de usuario: - ${e}`);
                 msgResponse = error.errorHandler(e, msgResponse);
-            })
+            });
     } catch (e) {
         console.log(`>>> Error en el método de 'createUser': - ${e}`);
         msgResponse = error.errorHandler(e, msgResponse);
@@ -92,7 +92,7 @@ const login = async (user) => {
                     msgResponse.status = 400;
                     msgResponse.message = "Ups! El nombre de usuario que ingresaste no existe. Por favor ingresa uno diferente.";
                     return msgResponse;
-                };
+                }
 
                 //Se compara las constraseñas
                 await comparePass(user.password, userFound.password)
@@ -112,17 +112,17 @@ const login = async (user) => {
                         msgResponse.documents = {
                             token,
                             expireAt: utilities.addSeconds(new Date(), config.timeToken)
-                        }
+                        };
                     })
                     .catch(e => {
                         console.log(`>>> Error comparando contraseñas: - ${e}`);
                         msgResponse = error.errorHandler(e, msgResponse);
-                    })
+                    });
             })
             .catch(e => {
                 console.log(`>>> Error verificando el nombre de usuario: - ${e}`);
                 msgResponse = error.errorHandler(e, msgResponse);
-            })
+            });
     } catch (e) {
         console.log(`>>> Error en el método de 'login': - ${e}`);
         msgResponse = error.errorHandler(e, msgResponse);

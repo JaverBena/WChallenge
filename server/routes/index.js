@@ -19,6 +19,7 @@ app.get('/', authMiddleware, (req, res) => {
 
 //consultas GET
 app.get(`/${service}/coins/:method`, authMiddleware, async (req, res) => {
+    let result;
     const metodo = req.params.method;
     console.log(`>> Inicia consulta GET al endpoint '/${service}/coins/${metodo}`);
     try {
@@ -29,8 +30,10 @@ app.get(`/${service}/coins/:method`, authMiddleware, async (req, res) => {
                 //Se valida el request de entrada
                 validate.getCoinsReq(dta);
                 //Se ejecuta el controller
-                let result = await coinsController.getCoinsListController(dta);
+                result = await coinsController.getCoinsListController(dta);
                 res.status(result.status).json(result);
+                break;
+            case 'hola':
                 break;
             default:
                 break;
@@ -41,7 +44,7 @@ app.get(`/${service}/coins/:method`, authMiddleware, async (req, res) => {
         msgResponse = error.errorHandler(e, msgResponse);
         res.status(msgResponse.status).json(msgResponse);
     }
-})
+});
 
 //Consultas POST
 app.post(`/${service}/:method`, async (req, res) => {
