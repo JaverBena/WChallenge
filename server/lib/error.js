@@ -15,6 +15,8 @@ function errorHandler(e, msg) {
         msg.status = 400;
     else if (e.status)
         msg.status = e.status;
+    else if (msg.status == 401)
+        msg.status = msg.status;
     else
         msg.status = 500;
 

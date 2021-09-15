@@ -1,8 +1,6 @@
 "use strict";
 
-const config = require('../config/general.config'),
-    jwt = require('jsonwebtoken'),
-    utils = require('../lib/utils');
+const utils = require('../lib/utils');
 
 /**
  * Middleware para verificar el token
@@ -10,16 +8,14 @@ const config = require('../config/general.config'),
  * @param {*} res response de la función
  * @param {*} next 
  */
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
     try {
         //Se obtiene el token de los headers
         const token = req.headers.token;
         if (!token) res.status(403).json('Ups! Ingresa un token.');
 
-        //Se decodifica el token
-        const tokenDecoded = jwt.verify(token, config.SECRET);
-        //Se verifica el nombre de usuario de acuerdo al token
-        const userFound = utils.verifyUserName(tokenDecoded.userName);
+        //Se verifica si existe un usuraio con el token ingresado
+        const userFound = await utils.verifyToken(token);
 
         if (!userFound) res.status(404).json({
             status: 404,
@@ -28,9 +24,10 @@ const verifyToken = (req, res, next) => {
         
         next();
     } catch (e) {
+        console.log('>>>>', e);
         res.status(401).json({
             status: 401,
-            message: "Ups! Usuario no autorizado"
+            message: e.message? e.message : "Ups! Usuario no autorizado"
         });
     }
 };

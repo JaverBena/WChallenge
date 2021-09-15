@@ -1,13 +1,11 @@
 "use strict";
 
-const userModel = require('../models/user.model'),
-    msg = require('../class/messageGeneral'),
+const msg = require('../class/messageGeneral'),
     config = require('../config/general.config'),
     utilities = require('../lib/utilities'),
     error = require('../lib/error'),
-    database = require('../config/db.connection'),
     { verifyUserName, generateToken } = require('../lib/utils'),
-    { encryptPassword, comparePass } = require('../services/index');
+    { encryptPassword, comparePass, saveUser, addUserCoins } = require('../services/index');
 
 /**
  * Función que permite registrar un usuario y de generarle el token.
@@ -37,15 +35,11 @@ const createUser = async (user) => {
                     .then(async pass => {
                         userCloned.password = pass;
 
-                        //Se almacena el usuario
-                        await database.dbConnect();
-                        const newUser = new userModel(userCloned);
-                        await newUser.save();
-                        await database.dbDisconnect();
-
+                        await saveUser(userCloned);
+                        await addUserCoins(userCloned);
 
                         //Se genera el token
-                        const token = generateToken(newUser.userName);
+                        const token = generateToken(user.userName);
                         msgResponse.success = true;
                         msgResponse.status = 200;
                         msgResponse.message = "Usuario creado con éxito";
@@ -63,10 +57,10 @@ const createUser = async (user) => {
                 console.log(`>>> Error verificando el nombre de usuario: - ${e}`);
                 msgResponse = error.errorHandler(e, msgResponse);
             });
+        return msgResponse;
     } catch (e) {
         console.log(`>>> Error en el método de 'createUser': - ${e}`);
         msgResponse = error.errorHandler(e, msgResponse);
-    } finally {
         return msgResponse;
     }
 };
@@ -123,10 +117,10 @@ const login = async (user) => {
                 console.log(`>>> Error verificando el nombre de usuario: - ${e}`);
                 msgResponse = error.errorHandler(e, msgResponse);
             });
+        return msgResponse;
     } catch (e) {
         console.log(`>>> Error en el método de 'login': - ${e}`);
         msgResponse = error.errorHandler(e, msgResponse);
-    } finally {
         return msgResponse;
     }
 };

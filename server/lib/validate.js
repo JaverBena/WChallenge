@@ -82,7 +82,50 @@ function getCoinsReq(data) {
             .string()
             .required()
             .matches(RegExp.currency2, {
-                message: `currency [${data.currency}] does not contain the valid format`
+                message: `currency [${data.currency}] does not contain the valid format. You must specify a number`
+            }),
+    });
+
+    schema.validateSync(data);
+}
+
+function addCoinsReq(data) {
+
+    const schema = yup.object().shape({
+        userName: yup
+            .string()
+            .required()
+            .min(1)
+            .max(15)
+            .matches(RegExp.string, {
+                message: `userName [${data.userName}] does not contain the valid format. You must specify a string`
+            }),
+        coinName: yup
+            .string()
+            .required()
+            .min(1)
+            .matches(RegExp.string, {
+                message: `coinName [${data.coinName}] does not contain the valid format. You must specify a name of a coin`
+            }),
+        quantity: yup
+            .number()
+            .required()
+            .typeError(`quantity [${data.quatity}] does not contain the valid format. You must specify a number`)
+    });
+
+    schema.validateSync(data);
+}
+
+function getCoinsInfoReq(data) {
+
+    const schema = yup.object().shape({
+        userName: yup
+            .string()
+            .required()
+            .min(1)
+            .max(15)
+            .matches(RegExp.string, {
+                message: `userName [${data.userName}] does not contain the valid format. You must specify a string`
             }),
     });
 
@@ -92,5 +135,7 @@ function getCoinsReq(data) {
 module.exports = {
     userReq,
     loginReq,
-    getCoinsReq
+    getCoinsReq,
+    addCoinsReq,
+    getCoinsInfoReq
 };

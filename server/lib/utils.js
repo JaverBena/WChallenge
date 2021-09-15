@@ -26,7 +26,20 @@ const generateToken = (userName) => {
     return jwt.sign({ userName }, config.SECRET, { expiresIn: config.timeToken });
 };
 
+/**
+ * Función que permite decodificar el token y verificar si existe un usuario
+ * @param {*} token Token ingresado en los headers
+ * @returns objeto con la información del usuario de acuerdo al token
+ */
+const verifyToken = async (token) => {
+    //Se decodifica el token
+    const tokenDecoded = jwt.verify(token, config.SECRET);
+    //Se verifica el nombre de usuario de acuerdo al token
+    return await verifyUserName(tokenDecoded.userName);
+};
+
 module.exports = {
     verifyUserName,
-    generateToken
+    generateToken,
+    verifyToken
 };
