@@ -1,0 +1,360 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "api-wchallenge",
+        "description": "API para continuar en el proceso de selección",
+        "contact": {
+            "email": "ing.javer@claro.com"
+        },
+        "version": "1.0.0",
+        "termsOfService": "http://swagger.io/terms/"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Local Dev Server"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Users",
+            "description": "Crear usuarios y obtener token"
+        },
+        {
+            "name": "Coins",
+            "description": "Transacciones con las criptomonedas"
+        }
+    ],
+    "paths": {
+        "/api-wchallenge/coins/list": {
+            "get": {
+                "tags": [
+                    "Coins"
+                ],
+                "summary": "Obtiene las criptomonedas disponibles",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/token"
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "EUR",
+                                "USD",
+                                "ARS"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api-wchallenge/coins/info": {
+            "get": {
+                "tags": [
+                    "Coins"
+                ],
+                "summary": "Obtiene información del usuario y monedas agregadas",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/token"
+                    },
+                    {
+                        "name": "userName",
+                        "desciption": "Nombre de usuario",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api-wchallenge/createUser": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Crear usuario",
+                "requestBody": {
+                    "description": "Request crear usuario",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Request Crear Usuario"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Información errada en la petición"
+                    },
+                    "401": {
+                        "description": "Unauthorized - La petición no incluye un token de autenticación valido o vigente"
+                    },
+                    "403": {
+                        "description": "Forbidden - El cliente no tiene permiso para acceder al recuerso"
+                    },
+                    "404": {
+                        "description": "Not Found - El recurso solicitado no fue encontrado"
+                    },
+                    "405": {
+                        "description": "Method Not Allowed - El método HTTP de la petición no es soportado por el recurso"
+                    },
+                    "500": {
+                        "description": "Internal Server Error - Ocurrió un error del lado del servidor"
+                    },
+                    "503": {
+                        "description": "Service Unavailable - El servicio no se encuentra disponible"
+                    }
+                }
+            }
+        },
+        "/api-wchallenge/login": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Generar token (Login)",
+                "requestBody": {
+                    "description": "Request login",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Request Login"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api-wchallenge/coins/addCoins": {
+            "post": {
+                "tags": [
+                    "Coins"
+                ],
+                "summary": "Agregar monedas al usuario",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/token"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Request Agregar Monedas",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Request Agregar Monedas"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "parameters": {
+            "token": {
+                "name": "token",
+                "in": "header",
+                "description": "Token para transacciónes",
+                "schema": {
+                    "type": "string"
+                },
+                "required": true
+            }
+        },
+        "schemas": {
+            "Request Crear Usuario": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "lastName",
+                    "userName",
+                    "password",
+                    "currency"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 25
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 25
+                    },
+                    "userName": {
+                        "type": "string",
+                        "description": "Debe ser único",
+                        "minLength": 1,
+                        "maxLength": 15
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 8
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "EUR",
+                            "USD",
+                            "ARS"
+                        ]
+                    }
+                }
+            },
+            "Request Login": {
+                "type": "object",
+                "required": [
+                    "userName",
+                    "password"
+                ],
+                "properties": {
+                    "userName": {
+                        "type": "string",
+                        "description": "Debe ser único",
+                        "minLength": 1,
+                        "maxLength": 15
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 8
+                    }
+                }
+            },
+            "Request Agregar Monedas": {
+                "type": "object",
+                "required": [
+                    "userName",
+                    "coinName",
+                    "quantity"
+                ],
+                "properties": {
+                    "userName": {
+                        "type": "string",
+                        "description": "Debe ser único",
+                        "minLength": 1,
+                        "maxLength": 15
+                    },
+                    "coinName": {
+                        "type": "string",
+                        "minLength": 1,
+                        "example": "bitcoin"
+                    },
+                    "quantity": {
+                        "type": "number"
+                    }
+                }
+            },
+            "Response": {
+                "type": "object",
+                "title": "Response",
+                "required": [
+                    "success",
+                    "status",
+                    "message"
+                ],
+                "properties": {
+                    "success": {
+                        "$id": "#/properties/success",
+                        "type": "boolean",
+                        "title": "The Success Schema"
+                    },
+                    "status": {
+                        "$id": "#/properties/status",
+                        "type": "integer",
+                        "title": "The Status Schema",
+                        "default": 0,
+                        "examples": [
+                            200, 400, 500
+                        ]
+                    },
+                    "message": {
+                        "$id": "#/properties/message",
+                        "type": "string",
+                        "title": "Mensaje de la respuesta",
+                        "default": "",
+                        "examples": [
+                            "Execution successful",
+                            "Execution unsuccessful"
+                        ],
+                        "pattern": "^(.*)$"
+                    },
+                    "documents": {
+                        "$id": "#/properties/documents",
+                        "type": "object",
+                        "title": "Cuerpo de la respuesta",
+                        "properties": ""
+                    }
+                }
+            }
+        }
+    }
+}

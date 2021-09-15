@@ -5,7 +5,9 @@ const express = require('express'),
     app = express(),
     cors = require('cors'),
     config = require('./config/general.config'),
-    info = require('../package.json');
+    info = require('../package.json'),
+    swaggerUi = require('swagger-ui-express'),
+    openApiDocumentation = require('./document/api-documentation.json');
 
 // database.dbConnect();
 
@@ -14,6 +16,7 @@ app
     .use(express.json())
     .use(cors())
     .use(require("./routes/index"))
+    .use(`/api/documentation`, swaggerUi.serve, swaggerUi.setup(openApiDocumentation))
     .listen(config.port, () => {
         console.log(`${info.name} listening on port ${config.port}`);
     });

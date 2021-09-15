@@ -47,6 +47,7 @@ const createUser = async (user) => {
                             token,
                             expireAt: utilities.addSeconds(new Date(), config.timeToken)
                         };
+                        console.log('>> Usuario creado con éxito');
                     })
                     .catch(e => {
                         console.log(`>>> Error encriptando la constraseña: - ${e}`);
@@ -107,6 +108,7 @@ const login = async (user) => {
                             token,
                             expireAt: utilities.addSeconds(new Date(), config.timeToken)
                         };
+                        console.log('>> Inicio de sesión exitoso!');
                     })
                     .catch(e => {
                         console.log(`>>> Error comparando contraseñas: - ${e}`);
