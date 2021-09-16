@@ -97,6 +97,104 @@
                 }
             }
         },
+        "/api-wchallenge/coins/top": {
+            "get": {
+                "tags": [
+                    "Coins"
+                ],
+                "summary": "Obtiene el top N de las monedas favoritas, comparandolas por el precio actual",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/token"
+                    },
+                    {
+                        "name": "userName",
+                        "desciption": "Nombre de usuario",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "currency",
+                        "desciption": "Tipo de moneda a consultar",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "EUR",
+                                "USD",
+                                "ARS"
+                            ],
+                            "example": "EUR"
+                        },
+                        "required": false
+                    },
+                    {
+                        "name": "sort",
+                        "desciption": "Código para organizar el top N. 1 = descendente, 2 = ascendente",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                1,
+                                2
+                            ],
+                            "example": 1
+                        },
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api-wchallenge/coins/id": {
+            "get": {
+                "tags": [
+                    "Coins"
+                ],
+                "summary": "Obtiene toda la información de una moneda filtrada por ID",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/token"
+                    },
+                    {
+                        "name": "id",
+                        "desciption": "id de la moneda a consultar",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "bitcoin",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api-wchallenge/createUser": {
             "post": {
                 "tags": [
@@ -180,7 +278,7 @@
                 }
             }
         },
-        "/api-wchallenge/coins/addCoins": {
+        "/api-wchallenge/coins/add": {
             "post": {
                 "tags": [
                     "Coins"
@@ -197,6 +295,42 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/Request Agregar Monedas"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api-wchallenge/coins/favorite": {
+            "post": {
+                "tags": [
+                    "Coins"
+                ],
+                "summary": "Agregar monedas favoritas al usuario",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/token"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Request Agregar Monedas",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Request Agregar Monedas Favoritas"
                             }
                         }
                     },
@@ -306,10 +440,47 @@
                     "coinName": {
                         "type": "string",
                         "minLength": 1,
-                        "example": "bitcoin"
+                        "example": "Bitcoin"
                     },
                     "quantity": {
                         "type": "number"
+                    }
+                }
+            },
+            "Request Agregar Monedas Favoritas": {
+                "type": "object",
+                "required": [
+                    "userName",
+                    "coins"
+                ],
+                "properties": {
+                    "userName": {
+                        "type": "string",
+                        "description": "Debe ser único",
+                        "minLength": 1,
+                        "maxLength": 15
+                    },
+                    "coins": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "id",
+                                "coinName"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "example": "bitcoin"
+                                },
+                                "coinName": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "example": "Bitcoin"
+                                }
+                            }
+                        }
                     }
                 }
             },
