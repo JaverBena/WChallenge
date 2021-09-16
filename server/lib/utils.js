@@ -38,8 +38,60 @@ const verifyToken = async (token) => {
     return await verifyUserName(tokenDecoded.userName);
 };
 
+/**
+ * Función que permite ordenar el arreglo de monedas
+ * @param {*} arrayCoins Arreglo con las monedas a ordenar
+ * @param {*} currency Tipo de moneda
+ * @param {*} orden Indica el orden (ascendente/descendente)
+ */
+const sortArray = (arrayCoins, currency, orden) => {
+    const ordenArray = (orden == 1) ? [1, -1] : [-1, 1];    // 1 = descendente, 2 = ascendente
+    currency = currency.toUpperCase();
+    switch (currency) {
+        case "USD":
+            arrayCoins.sort(function (a, b) {
+                if (a.priceUSD > b.priceUSD) {
+                    return ordenArray[0];
+                }
+                if (a.priceUSD < b.priceUSD) {
+                    return ordenArray[0];;
+                }
+                // a must be equal to b
+                return 0;
+            });
+            break;
+        case "EUR":
+            arrayCoins.sort(function (a, b) {
+                if (a.priceEUR > b.priceEUR) {
+                    return ordenArray[0];
+                }
+                if (a.priceEUR < b.priceEUR) {
+                    return ordenArray[0];;
+                }
+                // a must be equal to b
+                return 0;
+            });
+            break;
+        case "ARS":
+            arrayCoins.sort(function (a, b) {
+                if (a.priceARS > b.priceARS) {
+                    return ordenArray[0];
+                }
+                if (a.priceARS < b.priceARS) {
+                    return ordenArray[0];;
+                }
+                // a must be equal to b
+                return 0;
+            });
+            break;
+        default:
+            break;
+    }
+};
+
 module.exports = {
     verifyUserName,
     generateToken,
-    verifyToken
+    verifyToken,
+    sortArray
 };

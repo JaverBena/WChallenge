@@ -41,10 +41,18 @@ app.get(`/${service}/coins/:method`, authMiddleware, async (req, res) => {
                 res.status(result.status).json(result);
                 break;
             case 'top':
+                dta.token = req.headers.token;
                 //Se valida el request de entrada
-                validate.getCoinsInfoReq(dta);
+                validate.getTopReq(dta);
                 //Se ejecuta el controller
-                result = await coinsController.getCoinsInfoController(dta);
+                result = await coinsController.getTopController(dta);
+                res.status(result.status).json(result);
+                break;
+            case 'id':
+                //Se valida el request de entrada
+                validate.getCoinByIdReq(dta);
+                //Se ejecuta el controller
+                result = await coinsController.getCoinsById(dta);
                 res.status(result.status).json(result);
                 break;
             default:
@@ -113,7 +121,7 @@ app.post(`/${service}/coins/:method`, authMiddleware, async (req, res) => {
                 validate.addFavoriteCoinsReq(dta);
                 // //Se ejecuta el controller
                 result = await coinsController.addFavoriteCoins(dta);
-                res.status(200).json("result");
+                res.status(result.status).json(result);
                 break;
             default:
                 break;

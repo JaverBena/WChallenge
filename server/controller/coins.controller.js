@@ -151,12 +151,13 @@ const addFavoriteCoins = async(dta) => {
         if (infoUser.userName == dta.userName) {
             const userCoinsInfo = await getUserCoinsInfo({ userName: dta.userName });
 
+            if (userCoinsInfo.favoriteCoins.length >= 25) throw new Error('Has superado el límite para agregar monedas');
             //Se recorre el arreglo de las monedas favoritas
             for (const favoriteCoin of dta.coins) {
                 const validateCoin = userCoinsInfo.favoriteCoins.filter(coin => coin.coinName == favoriteCoin.coinName);
                 if (validateCoin.length == 0) {
                     // Se agregan las monedas favoritas
-                    await addFavoriteCoinsService({ userName: dta.userName, coinName: favoriteCoin.coinName })
+                    await addFavoriteCoinsService({ userName: dta.userName, ...favoriteCoin })
                         .then(() => {
                             console.log('>> Monedas favoritas agregadas correctamente');
                             msgResponse.message = 'Monedas favoritas agregadas correctamente!';
@@ -167,7 +168,13 @@ const addFavoriteCoins = async(dta) => {
                         })
                 }
             }
+        } else {
+            //Si el usuario obtenido del token no corresponde al enviado en el request, no es autorizado.
+            msgResponse.success = false;
+            msgResponse.status = 401;
+            msgResponse.message = "Ups! Usuario no autorizado"
         }
+        return msgResponse;
     } catch (e) {
         console.log(`>>> Error en el método 'addFavoriteCoins': - ${e}`);
         msgResponse = error.errorHandler(e, msgResponse);
@@ -175,9 +182,115 @@ const addFavoriteCoins = async(dta) => {
     }
 };
 
+/**
+ * Función que permite obtener toda la información de una sola moneda
+ * @param {*} dta id de la moneda a consultar
+ * @returns Objeto con la información de la moneda
+ */
+const getCoinsById = async (dta) => {
+    let msgResponse = new msg.MessageBuilder()
+        .setSuccess(true)
+        .setStatus(200)
+        .setMessage()
+        .build();
+
+    try {
+        const paramsCoinsMarkets = {
+            tickers: false,
+            community_data: false,
+            developer_data: false,
+            sparkline: false
+        };
+        const uri = config.coins.urlCoinsInfo + dta.id;
+        //Se consulta la API de CoinGecko para obtener información de la moneda por ID
+        await getCoinsService(uri, paramsCoinsMarkets)
+            .then(async r => {
+                let coin = r.data;
+                msgResponse.documents = coin;
+            })
+            .catch(e => {
+                console.log(`>>> Error haciendo el llamado a: ${uri} - ${e}`);
+                msgResponse = error.errorHandler(e, msgResponse);
+            });
+        return msgResponse;
+    } catch (e) {
+        console.log(`>>> Error en el método 'getCoinsById': - ${e}`);
+        msgResponse = error.errorHandler(e, msgResponse);
+        return msgResponse;
+    }
+};
+
+/**
+ * Función que permite obtener el TOP N de las monedas favoritas del usuario
+ * @param {*} dta Objeto con la información de del usuario
+ * @returns Top N de las monedas del usuario
+ */
+const getTopController = async(dta) => {
+    let msgResponse = new msg.MessageBuilder()
+        .setSuccess(true)
+        .setStatus(200)
+        .setMessage()
+        .build();
+
+    try {
+        //Se obtiene info del usuario por medio del token
+        const infoUser = await utils.verifyToken(dta.token);
+        if (!infoUser) {
+            msgResponse.status = 401;
+            throw new Error('El token no es valido');
+        }
+
+        //Se valida si el nombre de usuario corresponde al del token
+        if (infoUser.userName == dta.userName) {
+            const userCoinsInfo = await getUserCoinsInfo({ userName: dta.userName });
+
+            if (userCoinsInfo.favoriteCoins.length == 0) throw new Error('Agrega monedas favoritas para comparar');
+
+            let arrayCoins = [];
+            for (const favoriteCoin of userCoinsInfo.favoriteCoins) {
+
+                let coinInfo = await getCoinsById({ id: favoriteCoin.id });
+                if (coinInfo.error) throw new Error(`No se encontró información de la moneda con id ${favoriteCoin.id}`);
+
+                let temp = {
+                    name: coinInfo.documents.name,
+                    symbol: coinInfo.documents.symbol,
+                    image: coinInfo.documents.image.thumb ? coinInfo.documents.image.thumb : coinInfo.documents.image.small ? coinInfo.documents.image.small : coinInfo.documents.image.large,
+                    priceUSD: coinInfo.documents.market_data.current_price.usd,
+                    priceEUR: coinInfo.documents.market_data.current_price.eur,
+                    priceARS: coinInfo.documents.market_data.current_price.ars,
+                    lastUpdated: coinInfo.documents.last_updated
+                }
+
+                arrayCoins.push(temp);
+            }
+
+            console.log('Arreglo desorganizado --> ', arrayCoins);
+            const currency = dta.currency ? dta.currency : userCoinsInfo.currency;
+            const orden = dta.sort ? dta.sort : 1;
+            utils.sortArray(arrayCoins, currency, orden);
+            console.log('Arreglo organizado --> ', arrayCoins);
+
+            msgResponse.documents = arrayCoins;
+        } else {
+            //Si el usuario obtenido del token no corresponde al enviado en el request, no es autorizado.
+            msgResponse.success = false;
+            msgResponse.status = 401;
+            msgResponse.message = "Ups! Usuario no autorizado"
+        }
+        return msgResponse;
+    } catch (e) {
+        console.log(`>>> Error en el método 'getTopController': - ${e}`);
+        msgResponse = error.errorHandler(e, msgResponse);
+        return msgResponse;
+    }
+}
+
 module.exports = {
     getCoinsListController,
     addCoins,
     getCoinsInfoController,
-    addFavoriteCoins
+    addFavoriteCoins,
+    getTopController,
+    getCoinsById
 };

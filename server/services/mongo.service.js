@@ -102,6 +102,7 @@ const addFavoriteCoins = async (dta) => {
     let seteo = {
         $push: {
             favoriteCoins: {
+                id: dta.id,
                 coinName: dta.coinName
             }
         }

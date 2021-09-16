@@ -11,6 +11,7 @@ const coinsArray = new mongoose.Schema({
 }, { _id: false });
 
 const favoriteCoinsArray = new mongoose.Schema({
+    id: String,
     coinName: String
 }, { _id: false });
 
