@@ -6,9 +6,9 @@ const express = require('express'),
     info = require('../../package.json'),
     validate = require('../lib/validate'),
     error = require('../lib/error'),
-    userController = require('../controller/user.controller'),
-    { authMiddleware } = require('../middlewares/index'),
-    coinsController = require('../controller/coins.controller');
+    userController = require('../controllers/user.controller'),
+    coinsController = require('../controllers/coins.controller'),
+    { authMiddleware } = require('../middlewares/index');
 
 const service = info.name;
 
