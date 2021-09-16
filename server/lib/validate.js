@@ -132,10 +132,36 @@ function getCoinsInfoReq(data) {
     schema.validateSync(data);
 }
 
+function addFavoriteCoinsReq(data) {
+
+    const schema = yup.object().shape({
+        userName: yup
+            .string()
+            .required()
+            .min(1)
+            .max(15)
+            .matches(RegExp.string, {
+                message: `userName [${data.userName}] does not contain the valid format. You must specify a string`
+            }),
+        coins: yup.array().min(1).of(yup.object().shape({
+            coinName: yup
+            .string()
+            .required()
+            .min(1)
+            .matches(RegExp.string, {
+                message: `coinName [${data.coinName}] does not contain the valid format. You must specify a name of a coin`
+            }),
+        }))
+    });
+
+    schema.validateSync(data);
+}
+
 module.exports = {
     userReq,
     loginReq,
     getCoinsReq,
     addCoinsReq,
-    getCoinsInfoReq
+    getCoinsInfoReq,
+    addFavoriteCoinsReq
 };

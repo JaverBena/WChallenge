@@ -1,6 +1,6 @@
 "use strict";
 
-const { getCoinsService, addCoinsService, getUserCoinsInfo } = require('../services/index'),
+const { getCoinsService, addCoinsService, getUserCoinsInfo, addFavoriteCoinsService } = require('../services/index'),
     msg = require('../class/messageGeneral'),
     config = require('../config/general.config'),
     error = require('../lib/error'),
@@ -87,7 +87,7 @@ const addCoins = async (dta) => {
                 .catch(e => {
                     console.log(`>>> Error al guardar las monedas - ${e}`);
                     msgResponse = error.errorHandler(e, msgResponse);
-                })
+                });
         } else {
             //Si el usuario obtenido del token no corresponde al enviado en el request, no es autorizado.
             msgResponse.success = false;
@@ -125,10 +125,59 @@ const getCoinsInfoController = async (dta) => {
         msgResponse = error.errorHandler(e, msgResponse);
         return msgResponse;
     }
-}
+};
+
+/**
+ * Función que permite agregar monedas favoritas al usuario
+ * @param {*} dta Objeto con la información de las monedas favoritas
+ * @returns Response de transacción
+ */
+const addFavoriteCoins = async(dta) => {
+    let msgResponse = new msg.MessageBuilder()
+        .setSuccess(true)
+        .setStatus(200)
+        .setMessage()
+        .build();
+
+    try {
+        //Se obtiene info del usuario por medio del token
+        const infoUser = await utils.verifyToken(dta.token);
+        if (!infoUser) {
+            msgResponse.status = 401;
+            throw new Error('El token no es valido');
+        }
+
+        //Se valida si el nombre de usuario corresponde al del token
+        if (infoUser.userName == dta.userName) {
+            const userCoinsInfo = await getUserCoinsInfo({ userName: dta.userName });
+
+            //Se recorre el arreglo de las monedas favoritas
+            for (const favoriteCoin of dta.coins) {
+                const validateCoin = userCoinsInfo.favoriteCoins.filter(coin => coin.coinName == favoriteCoin.coinName);
+                if (validateCoin.length == 0) {
+                    // Se agregan las monedas favoritas
+                    await addFavoriteCoinsService({ userName: dta.userName, coinName: favoriteCoin.coinName })
+                        .then(() => {
+                            console.log('>> Monedas favoritas agregadas correctamente');
+                            msgResponse.message = 'Monedas favoritas agregadas correctamente!';
+                        })
+                        .catch(e => {
+                            console.log(`>>> Error al guardar las monedas favoritas - ${e}`);
+                            msgResponse = error.errorHandler(e, msgResponse);
+                        })
+                }
+            }
+        }
+    } catch (e) {
+        console.log(`>>> Error en el método 'addFavoriteCoins': - ${e}`);
+        msgResponse = error.errorHandler(e, msgResponse);
+        return msgResponse;
+    }
+};
 
 module.exports = {
     getCoinsListController,
     addCoins,
-    getCoinsInfoController
+    getCoinsInfoController,
+    addFavoriteCoins
 };

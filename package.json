@@ -1,7 +1,7 @@
 {
   "name": "api-wchallenge",
   "version": "1.0.0",
-  "description": "",
+  "description": "API para continuar en el proceso de selección",
   "main": "app.js",
   "scripts": {
     "start": "nodemon server/app.js",

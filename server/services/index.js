@@ -17,6 +17,7 @@ const services = {
     addUserCoins: mongoService.addUserCoins,
     getUserCoinsInfo: mongoService.getUserCoinsInfo,
     addCoinsService: mongoService.addCoins,
+    addFavoriteCoinsService: mongoService.addFavoriteCoins
 };
 
 module.exports = services;

@@ -17,7 +17,7 @@ app.get('/', authMiddleware, (req, res) => {
     res.json(`Welcome to ${info.name}`);
 });
 
-//consultas GET
+//consultas GET relacionadas con las monedas y usuarios
 app.get(`/${service}/coins/:method`, authMiddleware, async (req, res) => {
     let result;
     const metodo = req.params.method;
@@ -40,6 +40,13 @@ app.get(`/${service}/coins/:method`, authMiddleware, async (req, res) => {
                 result = await coinsController.getCoinsInfoController(dta);
                 res.status(result.status).json(result);
                 break;
+            case 'top':
+                //Se valida el request de entrada
+                validate.getCoinsInfoReq(dta);
+                //Se ejecuta el controller
+                result = await coinsController.getCoinsInfoController(dta);
+                res.status(result.status).json(result);
+                break;
             default:
                 break;
         }
@@ -51,7 +58,7 @@ app.get(`/${service}/coins/:method`, authMiddleware, async (req, res) => {
     }
 });
 
-//Consultas POST
+//Consultas POST relacionadas con users
 app.post(`/${service}/:method`, async (req, res) => {
     let result;
     const metodo = req.params.method;
@@ -90,16 +97,23 @@ app.post(`/${service}/coins/:method`, authMiddleware, async (req, res) => {
     const metodo = req.params.method;
     console.log(`>> Inicia consulta POST al endpoint '/${service}/${metodo}`);
     try {
-        const dta = req.body;
+        let dta = req.body;
         dta.token = req.headers.token;
         console.log(`Request: ${JSON.stringify(dta)}`);
         switch (metodo) {
-            case "addCoins":
+            case "add":
                 //Se valida la data
                 validate.addCoinsReq(dta);
                 //Se ejecuta el controller
                 result = await coinsController.addCoins(dta);
                 res.status(result.status).json(result);
+                break;
+            case "favorite":
+                //Se valida la data
+                validate.addFavoriteCoinsReq(dta);
+                // //Se ejecuta el controller
+                result = await coinsController.addFavoriteCoins(dta);
+                res.status(200).json("result");
                 break;
             default:
                 break;

@@ -14,7 +14,7 @@ const saveUser = async (data) => {
     const newUser = await userModel.create(data);
     await database.dbDisconnect();
     return newUser;
-}
+};
 
 /**
  * Función que permite crear y almacenar un registro con la información del usuario y monedas
@@ -33,7 +33,7 @@ const addUserCoins = async (data) => {
     const newUserCoins = await userCoinsModel.create(userCoins);
     await database.dbDisconnect();
     return newUserCoins;
-}
+};
 
 /**
  * Función que permite obtener un registro de bd con la información del usuario
@@ -45,7 +45,7 @@ const getUserCoinsInfo = async (data) => {
     const userCoinInfo = await userCoinsModel.findOne(data);
     await database.dbDisconnect();
     return userCoinInfo;
-}
+};
 
 /**
  * Función que permite agregar monedas al usuario
@@ -67,13 +67,15 @@ const addCoins = async (dta, validateCoin) => {
             }
         };
 
-        arrayFilter = {'arrayFilters': [
-            {
-                "coin.coinName": {
-                    $eq: dta.coinName
+        arrayFilter = {
+            'arrayFilters': [
+                {
+                    "coin.coinName": {
+                        $eq: dta.coinName
+                    }
                 }
-            }
-        ]};
+            ]
+        };
     } else {
         seteo = {
             $push: {
@@ -88,11 +90,32 @@ const addCoins = async (dta, validateCoin) => {
     const userCoinInfoUpdated = await userCoinsModel.updateOne(filter, seteo, arrayFilter);
     await database.dbDisconnect();
     return userCoinInfoUpdated;
-}
+};
+
+/**
+ * Función que permite actualizar el arreglo de las monedas favoritas
+ * @param {*} dta Objeto con la información a almacenar
+ * @returns Response de la transacción
+ */
+const addFavoriteCoins = async (dta) => {
+    const filter = { userName: dta.userName };
+    let seteo = {
+        $push: {
+            favoriteCoins: {
+                coinName: dta.coinName
+            }
+        }
+    }
+    await database.dbConnect();
+    const userCoinInfoUpdated = await userCoinsModel.updateOne(filter, seteo);
+    await database.dbDisconnect();
+    return userCoinInfoUpdated;
+};
 
 module.exports = {
     saveUser,
     addUserCoins,
     getUserCoinsInfo,
-    addCoins
+    addCoins,
+    addFavoriteCoins
 };

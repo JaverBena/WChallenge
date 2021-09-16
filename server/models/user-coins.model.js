@@ -10,6 +10,10 @@ const coinsArray = new mongoose.Schema({
     }
 }, { _id: false });
 
+const favoriteCoinsArray = new mongoose.Schema({
+    coinName: String
+}, { _id: false });
+
 const userCoins = new mongoose.Schema({
     name: String,
     lastName: String,
@@ -18,7 +22,8 @@ const userCoins = new mongoose.Schema({
         unique: true
     },
     currency: String,
-    coins: [coinsArray]
+    coins: [coinsArray],
+    favoriteCoins: [favoriteCoinsArray]
 }, {
     timestamps: true,
     versionKey: false
