@@ -5,6 +5,18 @@ const database = require('../config/db.connection'),
     userCoinsModel = require('../models/user-coins.model');
 
 /**
+ * Función que permite validar si el nombre de usuario existe.
+ * @param {*} userName propiedad del nombre de usuario
+ * @returns boolean indicando si existe o no el usuario
+ */
+ const verifyUserName = async (userName) => {
+    await database.dbConnect();
+    const userFound = await userModel.findOne({ userName });
+    await database.dbDisconnect();
+    return userFound? userFound : false;
+};
+
+/**
  * Función que permite crear y almacenar un registro con la información del usuario
  * @param {*} data Objeto con los datos del usuario a crear
  * @returns Response del usuario guardado
@@ -114,6 +126,7 @@ const addFavoriteCoins = async (dta) => {
 };
 
 module.exports = {
+    verifyUserName,
     saveUser,
     addUserCoins,
     getUserCoinsInfo,

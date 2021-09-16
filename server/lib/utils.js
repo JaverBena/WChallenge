@@ -1,21 +1,21 @@
 "use strict";
 
-const userModel = require('../models/user.model'),
+const mongoServices = require('../services/mongo.service'),
     jwt = require('jsonwebtoken'),
-    database = require('../config/db.connection'),
+    // database = require('../config/db.connection'),
     config = require('../config/general.config');
 
-/**
- * Función que permite validar si el nombre de usuario existe.
- * @param {*} userName propiedad del nombre de usuario
- * @returns boolean indicando si existe o no el usuario
- */
- const verifyUserName = async (userName) => {
-    await database.dbConnect();
-    const userFound = await userModel.findOne({userName});
-    await database.dbDisconnect();
-    return userFound? userFound : false;
-};
+// /**
+//  * Función que permite validar si el nombre de usuario existe.
+//  * @param {*} userName propiedad del nombre de usuario
+//  * @returns boolean indicando si existe o no el usuario
+//  */
+// const verifyUserName = async (userName) => {
+//     await database.dbConnect();
+//     const userFound = await userModel.findOne({ userName });
+//     await database.dbDisconnect();
+//     return userFound? userFound : false;
+// };
 
 /**
  * Función que permite generar un token para que el usuario pueda hacer consultas.
@@ -35,7 +35,7 @@ const verifyToken = async (token) => {
     //Se decodifica el token
     const tokenDecoded = jwt.verify(token, config.SECRET);
     //Se verifica el nombre de usuario de acuerdo al token
-    return await verifyUserName(tokenDecoded.userName);
+    return await mongoServices.verifyUserName(tokenDecoded.userName);
 };
 
 /**
@@ -90,7 +90,6 @@ const sortArray = (arrayCoins, currency, orden) => {
 };
 
 module.exports = {
-    verifyUserName,
     generateToken,
     verifyToken,
     sortArray

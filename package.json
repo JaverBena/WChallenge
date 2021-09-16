@@ -6,8 +6,9 @@
   "scripts": {
     "start": "nodemon server/app.js",
     "start:dev": "nodemon server/app.js",
-    "pretest": "eslint --ignore-path .gitignore .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha server/test/**/*.test.js",
+    "test:cov": "nyc --reporter cobertura --reporter html --check-coverage=true mocha server/test/**/*.test.js --reporter mocha-junit-reporter --reporter-options mochaFile=./coverage/test-report.xml --exit",
+    "preTest": "eslint --ignore-path .gitignore ."
   },
   "repository": {
     "type": "git",

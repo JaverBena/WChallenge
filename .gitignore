@@ -1,5 +1,9 @@
-# Dependency directories
+# Dependency directories and more
 node_modules
+
+# test coverage
+.nyc_output
+coverage
 
 # Optional eslint cache
 .eslintrc

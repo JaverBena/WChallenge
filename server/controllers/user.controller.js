@@ -4,8 +4,9 @@ const msg = require('../class/messageGeneral'),
     config = require('../config/general.config'),
     utilities = require('../lib/utilities'),
     error = require('../lib/error'),
-    { verifyUserName, generateToken } = require('../lib/utils'),
-    { encryptPassword, comparePass, saveUser, addUserCoins } = require('../services/index');
+    mongoServices = require('../services/mongo.service'),
+    authServices = require('../services/auth.service'),
+    utils = require('../lib/utils');
 
 /**
  * Función que permite registrar un usuario y de generarle el token.
@@ -22,7 +23,7 @@ const createUser = async (user) => {
     try {
         let userCloned = utilities.cloneObject(user);
         //Se verifica si existe el nombre de usuario
-        await verifyUserName(user.userName)
+        await mongoServices.verifyUserName(user.userName)
             .then(async userFound => {
                 if (userFound) {
                     msgResponse.status = 400;
@@ -31,15 +32,15 @@ const createUser = async (user) => {
                 }
 
                 //Se encripta la contraseña ingresada
-                await encryptPassword(user.password)
+                await authServices.encryptPassword(user.password)
                     .then(async pass => {
                         userCloned.password = pass;
 
-                        await saveUser(userCloned);
-                        await addUserCoins(userCloned);
+                        await mongoServices.saveUser(userCloned);
+                        await mongoServices.addUserCoins(userCloned);
 
                         //Se genera el token
-                        const token = generateToken(user.userName);
+                        const token = utils.generateToken(user.userName);
                         msgResponse.success = true;
                         msgResponse.status = 200;
                         msgResponse.message = "Usuario creado con éxito";
@@ -80,7 +81,7 @@ const login = async (user) => {
 
     try {
         //Se verifica si existe el usuario
-        await verifyUserName(user.userName)
+        await mongoServices.verifyUserName(user.userName)
             .then(async r => {
                 const userFound = r;
                 if (!userFound) {
@@ -90,7 +91,7 @@ const login = async (user) => {
                 }
 
                 //Se compara las constraseñas
-                await comparePass(user.password, userFound.password)
+                await authServices.comparePass(user.password, userFound.password)
                     .then(async r => {
                         const matchPassword = r;
                         if (!matchPassword) {
@@ -100,7 +101,7 @@ const login = async (user) => {
                         }
 
                         //Se genera el token
-                        const token = generateToken(userFound.userName);
+                        const token = utils.generateToken(userFound.userName);
                         msgResponse.success = true;
                         msgResponse.status = 200;
                         msgResponse.message = "Inicio de sesión exitoso!";
