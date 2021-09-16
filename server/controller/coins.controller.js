@@ -92,7 +92,7 @@ const addCoins = async (dta) => {
             //Si el usuario obtenido del token no corresponde al enviado en el request, no es autorizado.
             msgResponse.success = false;
             msgResponse.status = 401;
-            msgResponse.message = "Ups! Usuario no autorizado"
+            msgResponse.message = "Ups! Usuario no autorizado";
         }
         return msgResponse;
     } catch (e) {
@@ -165,14 +165,14 @@ const addFavoriteCoins = async(dta) => {
                         .catch(e => {
                             console.log(`>>> Error al guardar las monedas favoritas - ${e}`);
                             msgResponse = error.errorHandler(e, msgResponse);
-                        })
+                        });
                 }
             }
         } else {
             //Si el usuario obtenido del token no corresponde al enviado en el request, no es autorizado.
             msgResponse.success = false;
             msgResponse.status = 401;
-            msgResponse.message = "Ups! Usuario no autorizado"
+            msgResponse.message = "Ups! Usuario no autorizado";
         }
         return msgResponse;
     } catch (e) {
@@ -260,7 +260,7 @@ const getTopController = async(dta) => {
                     priceEUR: coinInfo.documents.market_data.current_price.eur,
                     priceARS: coinInfo.documents.market_data.current_price.ars,
                     lastUpdated: coinInfo.documents.last_updated
-                }
+                };
 
                 arrayCoins.push(temp);
             }
@@ -276,7 +276,7 @@ const getTopController = async(dta) => {
             //Si el usuario obtenido del token no corresponde al enviado en el request, no es autorizado.
             msgResponse.success = false;
             msgResponse.status = 401;
-            msgResponse.message = "Ups! Usuario no autorizado"
+            msgResponse.message = "Ups! Usuario no autorizado";
         }
         return msgResponse;
     } catch (e) {
@@ -284,7 +284,7 @@ const getTopController = async(dta) => {
         msgResponse = error.errorHandler(e, msgResponse);
         return msgResponse;
     }
-}
+};
 
 module.exports = {
     getCoinsListController,

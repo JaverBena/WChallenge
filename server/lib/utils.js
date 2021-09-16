@@ -54,7 +54,7 @@ const sortArray = (arrayCoins, currency, orden) => {
                     return ordenArray[0];
                 }
                 if (a.priceUSD < b.priceUSD) {
-                    return ordenArray[0];;
+                    return ordenArray[0];
                 }
                 // a must be equal to b
                 return 0;
@@ -66,7 +66,7 @@ const sortArray = (arrayCoins, currency, orden) => {
                     return ordenArray[0];
                 }
                 if (a.priceEUR < b.priceEUR) {
-                    return ordenArray[0];;
+                    return ordenArray[0];
                 }
                 // a must be equal to b
                 return 0;
@@ -78,7 +78,7 @@ const sortArray = (arrayCoins, currency, orden) => {
                     return ordenArray[0];
                 }
                 if (a.priceARS < b.priceARS) {
-                    return ordenArray[0];;
+                    return ordenArray[0];
                 }
                 // a must be equal to b
                 return 0;

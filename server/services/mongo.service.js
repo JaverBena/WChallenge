@@ -28,7 +28,7 @@ const addUserCoins = async (data) => {
         userName: data.userName,
         currency: data.currency,
         coins: []
-    }
+    };
     await database.dbConnect();
     const newUserCoins = await userCoinsModel.create(userCoins);
     await database.dbDisconnect();
@@ -84,7 +84,7 @@ const addCoins = async (dta, validateCoin) => {
                     quantity: parseFloat(dta.quantity)
                 }
             }
-        }
+        };
     }
     await database.dbConnect();
     const userCoinInfoUpdated = await userCoinsModel.updateOne(filter, seteo, arrayFilter);
@@ -106,7 +106,7 @@ const addFavoriteCoins = async (dta) => {
                 coinName: dta.coinName
             }
         }
-    }
+    };
     await database.dbConnect();
     const userCoinInfoUpdated = await userCoinsModel.updateOne(filter, seteo);
     await database.dbDisconnect();
