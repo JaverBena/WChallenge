@@ -1,6 +1,6 @@
 # WChallenge
 
-Este es un proyecto donde se desarrolla una API que expone un servicio http y que permite crear diferetes usuarios y con ellos realizar transacciones y/o consultas a la API de CoinGecko para obtener toda la información de las criptomonedas comerciales que existen. 
+Este es un proyecto donde se desarrolla una API que expone un servicio http y que permite crear diferetes usuarios. Además, con ellos se puede realizar transacciones y/o consultas a la API de CoinGecko, para obtener toda la información de las criptomonedas comerciales que existen. 
 
 Cada usuario puede, por medio de autenticación, agregarse las criptomonedas que desee y también agregar las monedas favoritas para obtener su TOP N de acuerdo a la ultima cotización de la moneda. 
 
