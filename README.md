@@ -36,21 +36,21 @@ npm start
 
 _Y listo. Recuerda antes de realizar peticiones asegurarse de tener ejecutandose el servicio de MongoDB_
 
-## Ejecutando las pruebas ⚙️
+## Documentación ⚙️
 
-_Para ejecutar las pruebas unitarias, ejecuta el siguiente comando desde una consola dentro del directorio descargado de GitHub_
+_Para revisar la documentación y realizar las peticiones creadas, realiza lo siguiente_
 
-```
-npm run test
-```
-
-_Para ejecutar las pruebas y revisar el coverage en el navegador, ejecuta el siguiente comando:_
+_Primero, ejecuta la API_
 
 ```
-npm run test:cov
+npm start
 ```
 
-_Despues de que se ejecuten las pruebas, debes entrar al directorio creado "coverage" y abrir desde un navegador el archivo "index.html". Allí puedes encontrar la cobertura del testing ejecutado._
+_Ve a un explorador y copia la siguiente dirección_
+
+```
+http://localhost:<<puerto>>/api/documentation/
+```
 
 ## Autor ✒️
 
