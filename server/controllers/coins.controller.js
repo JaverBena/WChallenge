@@ -1,6 +1,7 @@
 "use strict";
 
-const { getCoinsService, addCoinsService, getUserCoinsInfo, addFavoriteCoinsService } = require('../services/index'),
+const coinServices = require('../services/coins.service'),
+    mongoServices = require('../services/mongo.service'),
     msg = require('../class/messageGeneral'),
     config = require('../config/general.config'),
     error = require('../lib/error'),
@@ -23,7 +24,7 @@ const getCoinsListController = async (dta) => {
             vs_currency: dta.currency
         };
         //Se consulta la API de CoinGecko para obtener información de las monedas
-        await getCoinsService(config.coins.urlCoinsMarkets, paramsCoinsMarkets)
+        await coinServices.getCoinsService(config.coins.urlCoinsMarkets, paramsCoinsMarkets)
             .then(async r => {
                 let coins = r.data;
                 //Se obtiene la información solicitada
@@ -68,18 +69,17 @@ const addCoins = async (dta) => {
         //Se valida si el nombre de usuario corresponde al del token
         if (infoUser.userName == dta.userName) {
             //Se obtiene información de las monedas del usuario
-            const userCoinsInfo = await getUserCoinsInfo({ userName: dta.userName });
+            const userCoinsInfo = await mongoServices.getUserCoinsInfo({ userName: dta.userName });
             const validateCoin = userCoinsInfo.coins.filter(coin => coin.coinName == dta.coinName);
 
             if (validateCoin.length == 1) {
                 let temp = parseFloat(dta.quantity) + parseFloat(validateCoin[0].quantity);
-                console.log('****', temp);
                 if (temp < 0) {
                     throw new Error('La cantidad de monedas que se desea restar supera la cantidad registrada');
                 }
             }
             //Se agregan las monedas
-            await addCoinsService(dta, validateCoin)
+            await mongoServices.addCoins(dta, validateCoin)
                 .then(() => {
                     console.log('>> Monedas agregadas correctamente');
                     msgResponse.message = 'Monedas agregadas correctamente!';
@@ -116,12 +116,12 @@ const getCoinsInfoController = async (dta) => {
 
     try {
         //Se consulta información del usuario
-        const userCoinsInfo = await getUserCoinsInfo({ userName: dta.userName });
+        const userCoinsInfo = await mongoServices.getUserCoinsInfo({ userName: dta.userName });
         if (!userCoinsInfo) throw new Error('Ups! Usuario no encontrado');
         msgResponse.documents = userCoinsInfo;
         return msgResponse;
     } catch (e) {
-        console.log(`>>> Error en el método 'addCoins': - ${e}`);
+        console.log(`>>> Error en el método 'getCoinsInfoController': - ${e}`);
         msgResponse = error.errorHandler(e, msgResponse);
         return msgResponse;
     }
@@ -149,7 +149,7 @@ const addFavoriteCoins = async(dta) => {
 
         //Se valida si el nombre de usuario corresponde al del token
         if (infoUser.userName == dta.userName) {
-            const userCoinsInfo = await getUserCoinsInfo({ userName: dta.userName });
+            const userCoinsInfo = await mongoServices.getUserCoinsInfo({ userName: dta.userName });
 
             if (userCoinsInfo.favoriteCoins.length >= 25) throw new Error('Has superado el límite para agregar monedas');
             //Se recorre el arreglo de las monedas favoritas
@@ -157,7 +157,7 @@ const addFavoriteCoins = async(dta) => {
                 const validateCoin = userCoinsInfo.favoriteCoins.filter(coin => coin.coinName == favoriteCoin.coinName);
                 if (validateCoin.length == 0) {
                     // Se agregan las monedas favoritas
-                    await addFavoriteCoinsService({ userName: dta.userName, ...favoriteCoin })
+                    await mongoServices.addFavoriteCoins({ userName: dta.userName, ...favoriteCoin })
                         .then(() => {
                             console.log('>> Monedas favoritas agregadas correctamente');
                             msgResponse.message = 'Monedas favoritas agregadas correctamente!';
@@ -203,7 +203,7 @@ const getCoinsById = async (dta) => {
         };
         const uri = config.coins.urlCoinsInfo + dta.id;
         //Se consulta la API de CoinGecko para obtener información de la moneda por ID
-        await getCoinsService(uri, paramsCoinsMarkets)
+        await coinServices.getCoinsService(uri, paramsCoinsMarkets)
             .then(async r => {
                 let coin = r.data;
                 msgResponse.documents = coin;
@@ -242,7 +242,7 @@ const getTopController = async(dta) => {
 
         //Se valida si el nombre de usuario corresponde al del token
         if (infoUser.userName == dta.userName) {
-            const userCoinsInfo = await getUserCoinsInfo({ userName: dta.userName });
+            const userCoinsInfo = await mongoServices.getUserCoinsInfo({ userName: dta.userName });
 
             if (userCoinsInfo.favoriteCoins.length == 0) throw new Error('Agrega monedas favoritas para comparar');
 
@@ -250,7 +250,7 @@ const getTopController = async(dta) => {
             for (const favoriteCoin of userCoinsInfo.favoriteCoins) {
 
                 let coinInfo = await getCoinsById({ id: favoriteCoin.id });
-                if (coinInfo.error) throw new Error(`No se encontró información de la moneda con id ${favoriteCoin.id}`);
+                if (!coinInfo.success) throw new Error(`No se encontró información de la moneda con id ${favoriteCoin.id}`);
 
                 let temp = {
                     name: coinInfo.documents.name,
