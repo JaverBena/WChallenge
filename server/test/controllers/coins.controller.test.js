@@ -929,5 +929,4 @@ describe("Unit Tests to Coins Controller", () => {
         stubGetUserCoinsInfo.restore();
         stubGetCoinsService.restore();
     });
-
-})
+});

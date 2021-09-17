@@ -186,4 +186,4 @@ describe("Unit Tests to User Controller", () => {
         const value = await userController.login(userReq);
         expect(value).to.not.be.undefined;
     });
-})
+});

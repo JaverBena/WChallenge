@@ -4,7 +4,7 @@
   "description": "API para continuar en el proceso de selección",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon server/app.js",
+    "start": "node server/app.js",
     "start:dev": "nodemon server/app.js",
     "test": "mocha server/test/**/*.test.js",
     "test:cov": "nyc --reporter cobertura --reporter html --check-coverage=true mocha server/test/**/*.test.js --reporter mocha-junit-reporter --reporter-options mochaFile=./coverage/test-report.xml --exit",
@@ -41,7 +41,7 @@
   },
   "nyc": {
     "branches": "66.6",
-    "lines": "82.5",
+    "lines": "88.5",
     "functions": "79.6",
     "statements": "83.3",
     "include": "**/**",

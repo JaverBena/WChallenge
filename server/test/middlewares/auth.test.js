@@ -1,6 +1,5 @@
 const sinon = require('sinon');
 const { describe, it } = require('mocha');
-const { expect } = require('chai');
 const authMiddleware = require('../../middlewares/auth');
 const utils = require('../../lib/utils');
 
@@ -24,7 +23,7 @@ describe("Unit Tests to middlewares", () => {
         const res = sinon.spy();
         const next = sinon.spy();
 
-        const value = await authMiddleware.verifyToken(req, res, next);
+        await authMiddleware.verifyToken(req, res, next);
         sinon.assert.called(stubVerifyToken);
     });
 });
