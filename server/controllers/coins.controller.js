@@ -30,6 +30,7 @@ const getCoinsListController = async (dta) => {
                 //Se obtiene la información solicitada
                 let coinsInfo = coins.map((coin) => {
                     return {
+                        id: coin.id,
                         nombre: coin.name,
                         simbolo: coin.symbol,
                         precio: coin.current_price,

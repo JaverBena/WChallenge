@@ -63,6 +63,41 @@
                 }
             }
         },
+        "/api-wchallenge/coins/id": {
+            "get": {
+                "tags": [
+                    "Coins"
+                ],
+                "summary": "Obtiene toda la información de una moneda filtrada por ID",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/token"
+                    },
+                    {
+                        "name": "id",
+                        "desciption": "id de la moneda a consultar",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "bitcoin",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Response"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api-wchallenge/coins/info": {
             "get": {
                 "tags": [
@@ -144,41 +179,6 @@
                             "example": 1
                         },
                         "required": false
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Response"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api-wchallenge/coins/id": {
-            "get": {
-                "tags": [
-                    "Coins"
-                ],
-                "summary": "Obtiene toda la información de una moneda filtrada por ID",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/token"
-                    },
-                    {
-                        "name": "id",
-                        "desciption": "id de la moneda a consultar",
-                        "in": "query",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "bitcoin",
-                        "required": true
                     }
                 ],
                 "responses": {
