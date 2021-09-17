@@ -43,7 +43,7 @@
     "branches": "66.6",
     "lines": "88.5",
     "functions": "79.6",
-    "statements": "83.3",
+    "statements": "88.3",
     "include": "**/**",
     "exclude": [
       "coverage",
