@@ -20,13 +20,13 @@ _Para poner en funcionamiento la API y realizar pruebas, debes tener instalado l
 
 _A continuación, esta el paso a paso que debes seguir para tener un entorno de desarrollo ejecutandose_
 
-_Lo primero, desde una consola, descarga el repositorio desde GitHub con la siguiente instrucción_
+Lo primero, desde una consola, descarga el repositorio desde GitHub con la siguiente instrucción
 
 ```
 git clone https://github.com/JaverBena/WChallenge.git
 ```
 
-_Ingresa a la carpeta o directorio descargado (WChallenge)_
+Ingresa a la carpeta o directorio descargado (WChallenge)
 
 _Ejecuta el siguiente comando en consola:_
 
@@ -34,22 +34,22 @@ _Ejecuta el siguiente comando en consola:_
 npm start
 ```
 
-_Y listo. Recuerda antes de realizar peticiones asegurarse de tener ejecutandose el servicio de MongoDB_
+Y listo. Recuerda antes de realizar peticiones asegurarse de tener ejecutandose el servicio de MongoDB.
 
 ## Documentación ⚙️
 
 _Para revisar la documentación y realizar las peticiones creadas, realiza lo siguiente_
 
-_Primero, ejecuta la API_
+Primero, ejecuta la API
 
 ```
 npm start
 ```
 
-_Ve a un explorador y copia la siguiente dirección_
+Ve a un explorador y copia la siguiente dirección
 
 ```
-http://localhost:<<puerto>>/api/documentation/
+http://localhost:puerto/api/documentation/
 ```
 
 ## Autor ✒️
